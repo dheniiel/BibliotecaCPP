@@ -75,6 +75,10 @@ int main(){
                     cout << "Digite o código do livro: ";
                     cin >> livrosDisponiveis.codigoCatalogo;    
                     
+                    if (livrosDisponiveis.codigoCatalogo == ){
+                        
+                    }
+
                     cout << "Digite a data que deseja pegar o livro emprestado: ";
                     // getline (cin, livrosDisponiveis.emprestimoLivro.dataEmprestimo);
 
