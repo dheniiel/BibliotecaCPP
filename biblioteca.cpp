@@ -8,14 +8,19 @@ using namespace std;
 
 int main(){
     FILE *dadosUsuarios;
+    FILE *arquivoAux;
     int i = 0;
+    int codigoAlteracao;
+    
+    string continuar;
+
     struct emprestimo {
         int dataEmprestimo, dataDevolucao;
-        string usuario;
+        char usuario[150];
     } emprestimoLivro;
     struct livro {
         int codigoCatalogo, numeroPaginas;
-        string areaLivro, tituloLivro, autorLivro, editoraLivro;
+        char  areaLivro[100], tituloLivro[150], autorLivro[150], editoraLivro[150];
         struct emprestimo emprestimoLivro;
     } livrosDisponiveis;
     int opcaoMenu;
@@ -27,49 +32,68 @@ int main(){
     }
     else {
         fclose(dadosUsuarios);
-        
-        cout << "Digite o qual opcao desejada: ";
-        cin >> opcaoMenu; 
-        // cadastro
-        switch (opcaoMenu) {
-            case 1: 
-                for (i = 0; i < 5; i++) {
-                    cout << "Digite a codigo de catalogacao: ";
-                    cin >> livrosDisponiveis.codigoCatalogo;
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    arquivoAux = fopen("dados_usuarios.txt", "ab");
+    if (arquivoAux == NULL){
+        arquivoAux = fopen("dados_usuarios.txt", "wb");
+        cout << "Erro ao abrir o arquivo";
+    }
+    else {
+        fclose(arquivoAux);
+    }
+              
+    cout << "Digite o qual opcao desejada: ";
+    cin >> opcaoMenu; 
 
-                    cout << "Digite a area do livro: ";
-                    cin >> livrosDisponiveis.areaLivro;
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    // cadastro
+    switch (opcaoMenu) {
+        case 1: 
+            while(continuar == "S"){
+                cout << "Digite a codigo de catalogacao: ";
+                cin >> livrosDisponiveis.codigoCatalogo;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                    cout << "Digite o titulo do livro: ";
-                    cin >> livrosDisponiveis.tituloLivro;
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Digite a area do livro: ";
+                cin.get(livrosDisponiveis.areaLivro, 99);
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                    cout << "Digite os autores do livro: ";
-                    getline (cin, livrosDisponiveis.autorLivro);
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Digite o titulo do livro: ";
+                cin.get(livrosDisponiveis.tituloLivro, 150);
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                    cout << "Digite a editora do livro: ";
-                    cin >> livrosDisponiveis.editoraLivro;
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Digite os autores do livro: ";
+                cin.get(livrosDisponiveis.autorLivro, 150);
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                    cout << "Digite o numero de paginas do livro: ";
-                    cin >>livrosDisponiveis.numeroPaginas; 
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Digite a editora do livro: ";
+                cin.get(livrosDisponiveis.editoraLivro, 150);
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                    fopen("dados_usuarios.txt", "ab");
-                    if (fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosUsuarios) == 1){
-                        cout << "Registro gravado com sucesso";
-                        cin.get();
-                    }
-                    else {
-                        cout << "Erro ao gravar registro!" << endl;
-                        cin.get(); 
-                    }
-                    fclose(dadosUsuarios);
+                cout << "Digite o numero de paginas do livro: ";
+                cin >> livrosDisponiveis.numeroPaginas; 
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                fopen("dados_usuarios.txt", "ab+");
+                if (fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosUsuarios) == 1){
+                    cout << "Registro gravado com sucesso";
+                    cin.get();
                 }
+                else {
+                    cout << "Erro ao gravar registro!" << endl;
+                    cin.get(); 
+                }
+                fclose(dadosUsuarios);
 
+                cout << "Deseja cadastrar outro livro?" << endl;
+                cin >> continuar;
+            }
+        break;
+        case 2: 
+            cout << "Digite o codigo do livro a ser alterado: " << endl;
+            cin >> codigoAlteracao;
+
+    };
+/*
             case 2: //emprestimo
                 for (i = 0;  i < 10; i++) {
                     cout << "Digite o código do livro: ";
@@ -87,14 +111,6 @@ int main(){
 
                     livrosDisponiveis.emprestimoLivro.dataEmprestimo = 0;
                     livrosDisponiveis.emprestimoLivro.dataDevolucao = 0;
-                };
-            case 3:
-            //consulta de livro
-
-                cout << "Digite o codigo do livro: ";
-                cin >> livrosDisponiveis.codigoCatalogo;
-
-            // livros disponíveis
-        }
-    }
+                };*/
 }
+    
