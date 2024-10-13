@@ -138,6 +138,12 @@ int main(){
                         }
                 }
                 break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
             case 6:
                 cout << "Digite o codigo do livro a ser consultado: " << endl;
                 cin >> codigoConsulta;
@@ -159,6 +165,8 @@ int main(){
                         cin.ignore();
                         cin.get();
                         };
+                break;
+            case 7:
                 break;
             case 8:
                 dadosLivros = fopen("dados_livros.txt" , "rb");
