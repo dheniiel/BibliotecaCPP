@@ -26,7 +26,7 @@ int main(){
         fclose(arquivoAux);
     }
               
-    int codigoConsulta, opcaoMenu;
+    int codigoConsulta, opcaoMenu, pos;
     string continuar;
 
     struct emprestimo {
@@ -94,10 +94,15 @@ int main(){
             case 2: 
                 cout << "Digite o codigo do livro a ser alterado: " << endl;
                 cin >> codigoConsulta;
+                
+                dadosLivros = fopen("dados_livros.txt" , "rb+");
+                pos = -1;
 
-                while(!feof(dadosLivros)){
-                    while (continuar == "S" || continuar == "s")
-                        dadosLivros = fopen("dados_usuarios.txt" , "ab+");
+                while(continuar == "S" || continuar == "s"){
+                    fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+                    pos++;
+                    while (!feof(dadosLivros))
+                        fseek(dadosLivros, sizeof(struct livro)*pos,SEEK_SET);
                         if (codigoConsulta == livrosDisponiveis.codigoCatalogo){
                             cout << "Digite a area do livro: ";
                             cin.get(livrosDisponiveis.areaLivro, 99);
@@ -129,13 +134,14 @@ int main(){
                             }
                             fclose(dadosLivros);
 
-                            cout << "Deseja fazer outra alteracao? S ou N" << endl;
-                            cin >> continuar; 
-                        }
-                        else {
-                            cout << "Nao exite livros com este codigo. Deseja tentar novamente? S ou N " << endl; 
-                            cin >> continuar; 
-                        }
+                    }
+                    else {
+                        cout << "Nao exite livros com este codigo. Deseja tentar novamente? S ou N " << endl; 
+                        cin >> continuar; 
+                    }
+                    
+                    cout << "Deseja fazer outra alteracao? S ou N" << endl;
+                    cin >> continuar; 
                 }
                 break;
             case 6:
