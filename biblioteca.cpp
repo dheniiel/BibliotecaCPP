@@ -51,6 +51,7 @@ int main(){
 
                 while(continuar == "S" || continuar == "s"){
                     dadosLivros = fopen("dados_livros.txt", "ab+");
+
                     cout << "Digite a codigo de catalogacao: ";
                     cin >> livrosDisponiveis.codigoCatalogo;
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -90,7 +91,7 @@ int main(){
                     cin >> continuar;
                 }
                 break;
-            // alteracao
+            // alteração
             case 2: 
                 cout << "Digite o codigo do livro a ser alterado: " << endl;
                 cin >> codigoConsulta;
@@ -143,39 +144,64 @@ int main(){
                     cin >> continuar; 
                 }
                 break;
+            // exclusão
             case 3:
+                cout << "Informe o codigo do livro que deseja excluir: " << endl << endl;
+                cin >> codigoConsulta;
+
+                arquivoAux = fopen("arquivo_aux.txt", "wb");
+                dadosLivros = fopen("dados_livros.txt" , "rb");
+
+                fread(&livrosDisponiveis, sizeof(struct livro), 1 , dadosLivros);
+                while (!feof(dadosLivros)){
+                    if (livrosDisponiveis.codigoCatalogo != codigoConsulta){
+                        fwrite(&livrosDisponiveis, sizeof(struct livro), 1, arquivoAux);
+                    }
+                    fread(&livrosDisponiveis, sizeof(struct livro), 1 , dadosLivros);
+                }
+                fclose(arquivoAux);
+                fclose(dadosLivros);
+                remove("dados_livros.txt");
+                rename("arquivo_aux.txt", "dados_livros.txt");
+
                 break;
             case 4:
                 break;
             case 5:
                 break;
+            // consulta de livros
             case 6:
                 cout << "Digite o codigo do livro a ser consultado: " << endl;
                 cin >> codigoConsulta;
 
-                while(continuar == "S" || continuar == "s")
-                    dadosLivros = fopen("dados_livros.txt" , "rb");
-                    while(!feof(dadosLivros)){
-                        if (codigoConsulta == livrosDisponiveis.codigoCatalogo){
-                            fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
-                            cout << "Codigo = " << livrosDisponiveis.codigoCatalogo << endl;
-                            cout << "Area = "<< livrosDisponiveis.areaLivro << endl;
-                            cout << "Titulo = " << livrosDisponiveis.tituloLivro << endl;
-                            cout << "Autores = "<< livrosDisponiveis.autorLivro << endl;
-                            cout << "Editora = " << livrosDisponiveis.editoraLivro << endl;
-                            cout << "Numero de paginas = "<< livrosDisponiveis.numeroPaginas << endl;
-                            cout << "Situacao emprestimo "<< livrosDisponiveis.emprestimoLivro.usuario << endl;
-                        };
-                        fclose (dadosLivros);
-                        cin.ignore();
-                        cin.get();
-                        };
+                dadosLivros = fopen("dados_livros.txt" , "rb");
+                fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+
+                while(!feof(dadosLivros)){
+                    if (codigoConsulta == livrosDisponiveis.codigoCatalogo){
+                        cout << "Codigo = " << livrosDisponiveis.codigoCatalogo << endl;
+                        cout << "Area = "<< livrosDisponiveis.areaLivro << endl;
+                        cout << "Titulo = " << livrosDisponiveis.tituloLivro << endl;
+                        cout << "Autores = "<< livrosDisponiveis.autorLivro << endl;
+                        cout << "Editora = " << livrosDisponiveis.editoraLivro << endl;
+                        cout << "Numero de paginas = "<< livrosDisponiveis.numeroPaginas << endl;
+                        cout << "Situacao emprestimo "<< livrosDisponiveis.emprestimoLivro.usuario << endl;
+                    };
+                    fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+                };
+                fclose (dadosLivros);
+                cin.ignore();
+                cin.get();
                 break;
             case 7:
                 break;
+            // listagem de livros 
             case 8:
+                cout << "Ola, bem vindo! \nestes sao os livros presentes em nosso acervo: " << endl << endl;    
+
                 dadosLivros = fopen("dados_livros.txt" , "rb");
                 fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+
                 while(!feof(dadosLivros)){
                     cout << "Codigo = " << livrosDisponiveis.codigoCatalogo << endl;
                     cout << "Area = "<< livrosDisponiveis.areaLivro << endl;
