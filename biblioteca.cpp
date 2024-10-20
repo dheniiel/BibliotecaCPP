@@ -94,24 +94,13 @@ int main(){
             case 2: 
                 cout << "Digite o codigo do livro a ser alterado: " << endl;
                 cin >> codigoConsulta;
-<<<<<<< HEAD
                 dadosLivros = fopen("dados_usuarios.txt","rb+");
-                int pos = -1;
-                while(!feof(dadosLivros)){
-                    while (continuar == "S" || continuar == "s")
-                        fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
-                        pos++;
-=======
-                
-                dadosLivros = fopen("dados_livros.txt" , "rb+");
                 pos = -1;
 
                 while(continuar == "S" || continuar == "s"){
-                    fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
-                    pos++;
-                    while (!feof(dadosLivros))
-                        fseek(dadosLivros, sizeof(struct livro)*pos,SEEK_SET);
->>>>>>> 18dadd2442dcc3b096f0aa7ebb2914eb617d7943
+                    while (!feof(dadosLivros)){
+                        fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+                        pos++;
                         if (codigoConsulta == livrosDisponiveis.codigoCatalogo){
                             fseek(dadosLivros, sizeof(struct livro)*pos, SEEK_SET);
                             cout << "Digite a area do livro: ";
@@ -142,14 +131,14 @@ int main(){
                                 cout << "Erro ao atualizar registro!" << endl;
                                 cin.get(); 
                             }
-                            fclose(dadosLivros);
-
+                            break;
+                        }
+                        else {
+                            cout << "Nao exite livros com este codigo. Deseja tentar novamente? S ou N " << endl; 
+                            cin >> continuar; 
+                        }
                     }
-                    else {
-                        cout << "Nao exite livros com este codigo. Deseja tentar novamente? S ou N " << endl; 
-                        cin >> continuar; 
-                    }
-                    
+                    fclose(dadosLivros);
                     cout << "Deseja fazer outra alteracao? S ou N" << endl;
                     cin >> continuar; 
                 }
@@ -165,9 +154,9 @@ int main(){
                 cin >> codigoConsulta;
 
                 while(continuar == "S" || continuar == "s")
+                    dadosLivros = fopen("dados_livros.txt" , "rb");
                     while(!feof(dadosLivros)){
                         if (codigoConsulta == livrosDisponiveis.codigoCatalogo){
-                            dadosLivros = fopen("dados_livros.txt" , "rb");
                             fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
                             cout << "Codigo = " << livrosDisponiveis.codigoCatalogo << endl;
                             cout << "Area = "<< livrosDisponiveis.areaLivro << endl;
