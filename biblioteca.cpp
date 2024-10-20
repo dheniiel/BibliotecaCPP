@@ -94,11 +94,14 @@ int main(){
             case 2: 
                 cout << "Digite o codigo do livro a ser alterado: " << endl;
                 cin >> codigoConsulta;
-
+                dadosLivros = fopen("dados_usuarios.txt","rb+");
+                int pos = -1;
                 while(!feof(dadosLivros)){
                     while (continuar == "S" || continuar == "s")
-                        dadosLivros = fopen("dados_usuarios.txt" , "ab+");
+                        fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+                        pos++;
                         if (codigoConsulta == livrosDisponiveis.codigoCatalogo){
+                            fseek(dadosLivros, sizeof(struct livro)*pos, SEEK_SET);
                             cout << "Digite a area do livro: ";
                             cin.get(livrosDisponiveis.areaLivro, 99);
                             cin.ignore(numeric_limits<streamsize>::max(), '\n');
