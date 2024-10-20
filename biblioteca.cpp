@@ -1,6 +1,7 @@
 #include <iostream>
 #include <limits>
 #include <cstdio>
+#include <cstring>
 
 using namespace std;
 
@@ -76,7 +77,10 @@ int main(){
                     cin >> livrosDisponiveis.numeroPaginas; 
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                    
+                    strcpy(livrosDisponiveis.emprestimoLivro.usuario, "");                    
+                    strcpy(livrosDisponiveis.emprestimoLivro.dataEmprestimo, "");                    
+                    strcpy(livrosDisponiveis.emprestimoLivro.dataDevolucao, "");                    
+
                     if (fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros) == 1){
                         cout << "Registro gravado com sucesso";
                         cin.get();
@@ -91,6 +95,7 @@ int main(){
                     cin >> continuar;
                 }
                 break;
+                
             // alteração
             case 2: 
                 cout << "Digite o codigo do livro a ser alterado: " << endl;
@@ -144,6 +149,7 @@ int main(){
                     cin >> continuar; 
                 }
                 break;
+
             // exclusão
             case 3:
                 cout << "Informe o codigo do livro que deseja excluir: " << endl << endl;
@@ -169,6 +175,7 @@ int main(){
                 break;
             case 5:
                 break;
+
             // consulta de livros
             case 6:
                 cout << "Digite o codigo do livro a ser consultado: " << endl;
@@ -193,8 +200,10 @@ int main(){
                 cin.ignore();
                 cin.get();
                 break;
+
             case 7:
                 break;
+
             // listagem de livros 
             case 8:
                 cout << "Ola, bem vindo! \nestes sao os livros presentes em nosso acervo: " << endl << endl;    
