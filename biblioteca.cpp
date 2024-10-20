@@ -26,7 +26,7 @@ int main(){
         fclose(arquivoAux);
     }
               
-    int codigoConsulta, opcaoMenu;
+    int codigoConsulta, opcaoMenu, pos;
     string continuar;
 
     struct emprestimo {
@@ -94,12 +94,24 @@ int main(){
             case 2: 
                 cout << "Digite o codigo do livro a ser alterado: " << endl;
                 cin >> codigoConsulta;
+<<<<<<< HEAD
                 dadosLivros = fopen("dados_usuarios.txt","rb+");
                 int pos = -1;
                 while(!feof(dadosLivros)){
                     while (continuar == "S" || continuar == "s")
                         fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
                         pos++;
+=======
+                
+                dadosLivros = fopen("dados_livros.txt" , "rb+");
+                pos = -1;
+
+                while(continuar == "S" || continuar == "s"){
+                    fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+                    pos++;
+                    while (!feof(dadosLivros))
+                        fseek(dadosLivros, sizeof(struct livro)*pos,SEEK_SET);
+>>>>>>> 18dadd2442dcc3b096f0aa7ebb2914eb617d7943
                         if (codigoConsulta == livrosDisponiveis.codigoCatalogo){
                             fseek(dadosLivros, sizeof(struct livro)*pos, SEEK_SET);
                             cout << "Digite a area do livro: ";
@@ -132,13 +144,14 @@ int main(){
                             }
                             fclose(dadosLivros);
 
-                            cout << "Deseja fazer outra alteracao? S ou N" << endl;
-                            cin >> continuar; 
-                        }
-                        else {
-                            cout << "Nao exite livros com este codigo. Deseja tentar novamente? S ou N " << endl; 
-                            cin >> continuar; 
-                        }
+                    }
+                    else {
+                        cout << "Nao exite livros com este codigo. Deseja tentar novamente? S ou N " << endl; 
+                        cin >> continuar; 
+                    }
+                    
+                    cout << "Deseja fazer outra alteracao? S ou N" << endl;
+                    cin >> continuar; 
                 }
                 break;
             case 3:
