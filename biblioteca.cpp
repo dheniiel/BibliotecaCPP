@@ -220,6 +220,7 @@ int main(){
                         strcpy(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Indisponivel"); 
 
                         fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+                        cout << "Emprestimo realizado com sucesso!";
                         break;
                     }
                 }
@@ -236,25 +237,26 @@ int main(){
                 cin >> codigoConsulta;
 
                 while(continuar == "S" || continuar == "s"){
-                    dadosLivros = fopen("dados_livros.txt", "ab+");
+                    dadosLivros = fopen("dados_livros.txt", "rb+");
                     pos = -1;
                     while(!feof(dadosLivros)){
                         fread(&livrosDisponiveis, sizeof(struct livro), 1 , dadosLivros);
                         pos++;
-                        if (livrosDisponiveis.codigoCatalogo == codigoConsulta){
-                            if (strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Indisponivel") == 0){
-                                fseek(dadosLivros, sizeof(struct livro)*pos, SEEK_SET);
+                        if ((livrosDisponiveis.codigoCatalogo == codigoConsulta)&& (strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Indisponivel") == 0)){
+                            fseek(dadosLivros, sizeof(struct livro)*pos, SEEK_SET);
 
-                                strcpy(livrosDisponiveis.emprestimoLivro.usuario, "");                    
-                                strcpy(livrosDisponiveis.emprestimoLivro.dataEmprestimo, "");                    
-                                strcpy(livrosDisponiveis.emprestimoLivro.dataDevolucao, "");    
-                                strcpy(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Disponivel"); 
+                            strcpy(livrosDisponiveis.emprestimoLivro.usuario, "");                    
+                            strcpy(livrosDisponiveis.emprestimoLivro.dataEmprestimo, "");                    
+                            strcpy(livrosDisponiveis.emprestimoLivro.dataDevolucao, "");    
+                            strcpy(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Disponivel"); 
 
-                                fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
-                            }
+                            fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+                            cout << "Devolucao realizada com sucesso!";
+                            break;
                         }
                     }
                 }
+
                 fclose(dadosLivros);
                 cin.ignore();
                 cin.get();
