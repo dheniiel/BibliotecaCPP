@@ -30,10 +30,9 @@ int main(){
               
     int codigoConsulta, opcaoMenu, pos;
     string continuar;
-    char nome[150], dataE[5], dataD[5];
 
     struct emprestimo {
-        char usuario[150], dataEmprestimo[5], dataDevolucao[5], sitacaoEmprestimo[20];
+        char usuario[150], dataEmprestimo[6], dataDevolucao[6], sitacaoEmprestimo[20];
     };
     struct emprestimo emprestimoLivro;
     struct livro {
@@ -59,7 +58,8 @@ int main(){
         cout << "9 - SAIR\n";
         cout << "=======================================================================" << endl << endl; 
         cout << "Digite o qual opcao desejada: ";
-        cin >> opcaoMenu; 
+        cin >> opcaoMenu;                     
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "\n";
 
         switch (opcaoMenu) {
@@ -67,13 +67,13 @@ int main(){
             case 1: 
                 cout << "\e[2J" << "\e[0;0H";
                 cout << "CADASTRO DE LIVRO: \n\n";
-                cout << "Deseja cadastrar um livro? S ou N" << endl;
-                cin >> continuar;
+
+                continuar = "S";
 
                 while(continuar == "S" || continuar == "s"){
                     dadosLivros = fopen("dados_livros.txt", "ab+");
 
-                    cout << "Digite a codigo de catalogacao: ";
+                    cout << "\nDigite a codigo de catalogacao: ";
                     cin >> livrosDisponiveis.codigoCatalogo;
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -103,16 +103,19 @@ int main(){
                     strcpy(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Disponivel");                 
 
                     if (fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros) == 1){
-                        cout << "Registro gravado com sucesso";
+                        cout << "\nRegistro gravado com sucesso";
                         cin.get();
+                        cout << "\e[2J" << "\e[0;0H";
                     }
                     else {
-                        cout << "Erro ao gravar registro!" << endl;
-                        cin.get(); 
+                        cout << "\nErro ao gravar registro!";
+                        cin.get();
+                        cout << "\e[2J" << "\e[0;0H";
                     }
+            
                     fclose(dadosLivros);
 
-                    cout << "Deseja cadastrar outro livro?" << endl;
+                    cout << "\nDeseja cadastrar outro livro? S ou N: ";
                     cin >> continuar;
                 }
                 break;
@@ -121,42 +124,61 @@ int main(){
             case 2: 
                 cout << "\e[2J" << "\e[0;0H";
                 cout << "ALTERACAO: \n\n";
-                cout << "Digite o codigo do livro a ser alterado: " << endl;
-                cin >> codigoConsulta;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                dadosLivros = fopen("dados_livros.txt" , "rb+");
-                pos = -1;
-                while (!feof(dadosLivros)){
-                    fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
-                    pos++;
-                    if (codigoConsulta == livrosDisponiveis.codigoCatalogo){
-                        fseek(dadosLivros, sizeof(struct livro)*pos, SEEK_SET);
-                        cout << "Digite a area do livro: ";
-                        cin.get(livrosDisponiveis.areaLivro, 99);
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                continuar = "S";
 
-                        cout << "Digite o titulo do livro: ";
-                        cin.get(livrosDisponiveis.tituloLivro, 150);
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                while (continuar == "S" || continuar == "s"){    
+                    dadosLivros = fopen("dados_livros.txt" , "rb+");
+                    pos = -1;
 
-                        cout << "Digite os autores do livro: ";
-                        cin.get(livrosDisponiveis.autorLivro, 150);
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Digite o codigo do livro: ";
+                    cin >> codigoConsulta;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                        cout << "Digite a editora do livro: ";
-                        cin.get(livrosDisponiveis.editoraLivro, 150);
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    while (!feof(dadosLivros)){
+                        fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+                        pos++;
+                        if (codigoConsulta == livrosDisponiveis.codigoCatalogo){
+                            fseek(dadosLivros, sizeof(struct livro)*pos, SEEK_SET);
+                            cout << "Digite a area do livro: ";
+                            cin.get(livrosDisponiveis.areaLivro, 99);
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                        cout << "Digite o numero de paginas do livro: ";
-                        cin >> livrosDisponiveis.numeroPaginas; 
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                        
-                        fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
-                        break;
+                            cout << "Digite o titulo do livro: ";
+                            cin.get(livrosDisponiveis.tituloLivro, 150);
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                            cout << "Digite os autores do livro: ";
+                            cin.get(livrosDisponiveis.autorLivro, 150);
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                            cout << "Digite a editora do livro: ";
+                            cin.get(livrosDisponiveis.editoraLivro, 150);
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                            cout << "Digite o numero de paginas do livro: ";
+                            cin >> livrosDisponiveis.numeroPaginas; 
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                
+                            if (fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros) == 1){
+                                cout << "Registro atualizado com sucesso";
+                                cin.get();
+                                cout << "\e[2J" << "\e[0;0H";
+                            }
+                            else {
+                                cout << "Erro ao atualizar registro!" << endl;
+                                cin.get();
+                                cout << "\e[2J" << "\e[0;0H";
+                            }
+                            break;
+                        }
                     }
+                    fclose(dadosLivros);
+
+                    cout << "\nDeseja realizar mais uma alteracao? S ou N: ";
+                    cin >> continuar; 
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
-                fclose(dadosLivros);
                 cin.ignore();
                 cin.get();
                 break;
@@ -191,39 +213,61 @@ int main(){
             case 4:
                 cout << "\e[2J" << "\e[0;0H";
                 cout << "EMPRESTIMO: \n\n";
-                cout << "Digite o codigo do livro que deseja alugar: " << endl;
-                cin >> codigoConsulta;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                dadosLivros = fopen("dados_livros.txt", "rb+");
-                pos = -1;
-                while(!feof(dadosLivros)){
-                    fread(&livrosDisponiveis, sizeof(struct livro), 1 , dadosLivros);
-                    pos++;
-                    if ((strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Disponivel") == 0) && (livrosDisponiveis.codigoCatalogo == codigoConsulta)){
-                        fseek(dadosLivros, sizeof(struct livro)*pos, SEEK_SET);
+                continuar = "S";
 
-                        cout << "Digite o nome do usuario: " << endl;
-                        cin.get(livrosDisponiveis.emprestimoLivro.usuario, 150);
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                while(continuar == "S" || continuar == "s"){
+                    cout << "Digite o codigo do livro que deseja alugar: " << endl;
+                    cin >> codigoConsulta;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                        cout << "Digite a data de hoje:  " << endl;
-                        cin.get(livrosDisponiveis.emprestimoLivro.dataEmprestimo, 100);
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    dadosLivros = fopen("dados_livros.txt", "rb+");
+                    pos = -1;
+                    while(!feof(dadosLivros)){
+                        fread(&livrosDisponiveis, sizeof(struct livro), 1 , dadosLivros);
+                        pos++;
+                        if ((strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Disponivel") == 0) && (livrosDisponiveis.codigoCatalogo == codigoConsulta)){
+                            fseek(dadosLivros, sizeof(struct livro)*pos, SEEK_SET);
 
-                        cout << "Digite a data de devolucao:  " << endl;
-                        cin.get(livrosDisponiveis.emprestimoLivro.dataDevolucao, 100);
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                            cout << "Digite o nome do usuario: " << endl;
+                            cin.get(livrosDisponiveis.emprestimoLivro.usuario, 150);
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                        strcpy(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Indisponivel"); 
+                            cout << "Digite a data de hoje:  " << endl;
+                            cin.get(livrosDisponiveis.emprestimoLivro.dataEmprestimo, 6);
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                        fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
-                        cout << "Emprestimo realizado com sucesso!";
-                        break;
+                            cout << "Digite a data de devolucao:  " << endl;
+                            cin.get(livrosDisponiveis.emprestimoLivro.dataDevolucao, 6);
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                            strcpy(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Indisponivel"); 
+
+                            if (fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros) == 1){
+                                cout << "\nEmprestimo realizado com sucesso!";
+                                cin.get();
+                                cout << "\e[2J" << "\e[0;0H";
+
+                            }
+                            else {
+                                cout << "\nErro ao realizar emprestimo!" << endl;
+                                cin.get();
+                                cout << "\e[2J" << "\e[0;0H";
+                            }
+                            break;
+                        }
+                        if ((strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Indisponivel") == 0) && (livrosDisponiveis.codigoCatalogo == codigoConsulta)){
+                            cout << "Este livro esta indisponivel para emprestimo! \n";
+                            cin.get();
+                            cout << "\e[2J" << "\e[0;0H";
+                            break;
+                        }
                     }
+                    fclose(dadosLivros);
+
+                    cout << "\nDeseja realizar outro emprestimo? S ou N: ";
+                    cin >> continuar; 
                 }
-        
-                fclose(dadosLivros);
                 cin.ignore();
                 cin.get();
                 break;
@@ -232,30 +276,53 @@ int main(){
             case 5:
                 cout << "\e[2J" << "\e[0;0H";
                 cout << "DEVOLUCAO: \n\n";
-                cout << "Digite o codigo do livro que deseja devolver: " << endl;
-                cin >> codigoConsulta;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                dadosLivros = fopen("dados_livros.txt", "rb+");
-                pos = -1;
-                while(!feof(dadosLivros)){
-                    fread(&livrosDisponiveis, sizeof(struct livro), 1 , dadosLivros);
-                    pos++;
-                    if ((livrosDisponiveis.codigoCatalogo == codigoConsulta)&& (strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Indisponivel") == 0)){
-                        fseek(dadosLivros, sizeof(struct livro)*pos, SEEK_SET);
+                continuar = "S";
 
-                        strcpy(livrosDisponiveis.emprestimoLivro.usuario, "");                    
-                        strcpy(livrosDisponiveis.emprestimoLivro.dataEmprestimo, "");                    
-                        strcpy(livrosDisponiveis.emprestimoLivro.dataDevolucao, "");    
-                        strcpy(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Disponivel"); 
+                while (continuar == "S" || continuar == "s"){
+                    cout << "Digite o codigo do livro que deseja devolver: " << endl;
+                    cin >> codigoConsulta;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                        fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
-                        cout << "Devolucao realizada com sucesso!";
-                        break;
+                    dadosLivros = fopen("dados_livros.txt", "rb+");
+                    pos = -1;
+                    while(!feof(dadosLivros)){
+                        fread(&livrosDisponiveis, sizeof(struct livro), 1 , dadosLivros);
+                        pos++;
+                        if ((livrosDisponiveis.codigoCatalogo == codigoConsulta)&& (strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Indisponivel") == 0)){
+                            fseek(dadosLivros, sizeof(struct livro)*pos, SEEK_SET);
+
+                            strcpy(livrosDisponiveis.emprestimoLivro.usuario, "");                    
+                            strcpy(livrosDisponiveis.emprestimoLivro.dataEmprestimo, "");                    
+                            strcpy(livrosDisponiveis.emprestimoLivro.dataDevolucao, "");    
+                            strcpy(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Disponivel"); 
+
+                            if (fwrite(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros) == 1){
+                                cout << "\nDevolucao realizada com sucesso";
+                                cin.get();
+                                cout << "\e[2J" << "\e[0;0H";
+
+                            }
+                            else {
+                                cout << "\nErro ao realizar devolucao!" << endl;
+                                cin.get();
+                                cout << "\e[2J" << "\e[0;0H";
+                            }
+                            break;
+                        }
+                        else if(strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Disponivel") == 0){
+                            cout << "\nFalha na devolucao, este livro ja estava disponivel para emprestimo!\n";
+                            cin.get();
+                            cout << "\e[2J" << "\e[0;0H";
+                            break; 
+                        }
                     }
+                    fclose(dadosLivros);
+                    cout << "\nDeseja realizar mais uma devolucao? S ou N: ";
+                    cin >> continuar; 
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
                 
-                fclose(dadosLivros);
                 cin.ignore();
                 cin.get();
                 break;
@@ -264,28 +331,54 @@ int main(){
             case 6:
                 cout << "\e[2J" << "\e[0;0H";
                 cout << "CONSULTA: \n\n";
-                cout << "Digite o codigo do livro a ser consultado: " << endl;
-                cin >> codigoConsulta;
 
-                dadosLivros = fopen("dados_livros.txt" , "rb");
-                fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+                continuar = "S";
 
-                while(!feof(dadosLivros)){
-                    if (codigoConsulta == livrosDisponiveis.codigoCatalogo){
-                        cout << "Codigo = " << livrosDisponiveis.codigoCatalogo << endl;
-                        cout << "Area = "<< livrosDisponiveis.areaLivro << endl;
-                        cout << "Titulo = " << livrosDisponiveis.tituloLivro << endl;
-                        cout << "Autores = "<< livrosDisponiveis.autorLivro << endl;
-                        cout << "Editora = " << livrosDisponiveis.editoraLivro << endl;
-                        cout << "Numero de paginas = "<< livrosDisponiveis.numeroPaginas << endl;
-                        cout << "Situacao emprestimo = "<< livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo << endl;
-                    };
+                while(continuar == "S" || continuar == "s"){
+                    cout << "Digite o codigo do livro a ser consultado: " << endl;
+                    cin >> codigoConsulta;
+
+                    dadosLivros = fopen("dados_livros.txt" , "rb");
                     fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
-                };
-                fclose (dadosLivros);
+
+                    while(!feof(dadosLivros)){
+                        if ((codigoConsulta == livrosDisponiveis.codigoCatalogo) && (strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Indisponivel") == 0)){
+                            cout << "Codigo = " << livrosDisponiveis.codigoCatalogo << endl;
+                            cout << "Area = "<< livrosDisponiveis.areaLivro << endl;
+                            cout << "Titulo = " << livrosDisponiveis.tituloLivro << endl;
+                            cout << "Autores = "<< livrosDisponiveis.autorLivro << endl;
+                            cout << "Editora = " << livrosDisponiveis.editoraLivro << endl;
+                            cout << "Numero de paginas = "<< livrosDisponiveis.numeroPaginas << endl;
+                            cout << "Situacao emprestimo = " << livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo << endl;
+                            cout << "Emprestado para = " << livrosDisponiveis.emprestimoLivro.usuario << endl;
+                            cout << "Data emprestimo = " << livrosDisponiveis.emprestimoLivro.dataEmprestimo << endl;
+                            cout << "Data devolucao = " << livrosDisponiveis.emprestimoLivro.dataDevolucao << endl;
+
+                            break;
+                        }
+                        else if ((codigoConsulta == livrosDisponiveis.codigoCatalogo) && (strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Disponivel") == 0)){
+                            cout << "Codigo = " << livrosDisponiveis.codigoCatalogo << endl;
+                            cout << "Area = "<< livrosDisponiveis.areaLivro << endl;
+                            cout << "Titulo = " << livrosDisponiveis.tituloLivro << endl;
+                            cout << "Autores = "<< livrosDisponiveis.autorLivro << endl;
+                            cout << "Editora = " << livrosDisponiveis.editoraLivro << endl;
+                            cout << "Numero de paginas = "<< livrosDisponiveis.numeroPaginas << endl;
+                            cout << "Situacao emprestimo = " << livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo << endl;
+                        
+                            break;
+                        }
+                        fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
+                    }
+                    fclose (dadosLivros);
+
+                    cout << "\nDeseja realizar mais uma consulta? S ou N: ";
+                    cin >> continuar; 
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                }
                 cin.ignore();
                 cin.get();
                 break;
+
             // listagem livros disponiveis para emprestimo
             case 7:
                 cout << "\e[2J" << "\e[0;0H";
@@ -302,7 +395,9 @@ int main(){
                         cout << "Titulo = " << livrosDisponiveis.tituloLivro << endl;
                         cout << "Autores = "<< livrosDisponiveis.autorLivro << endl;
                         cout << "Editora = " << livrosDisponiveis.editoraLivro << endl;
-                        cout << "Numero de paginas = "<< livrosDisponiveis.numeroPaginas << endl << endl << endl;
+                        cout << "Numero de paginas = "<< livrosDisponiveis.numeroPaginas << endl;
+                        cout << "---------------------------------------------------" << endl;
+
                         fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
                     }
                 };
@@ -327,7 +422,8 @@ int main(){
                     cout << "Autores = "<< livrosDisponiveis.autorLivro << endl;
                     cout << "Editora = " << livrosDisponiveis.editoraLivro << endl;
                     cout << "Numero de paginas = "<< livrosDisponiveis.numeroPaginas << endl;
-                    cout << "Situacao de emprestimo = " << livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo << endl << endl << endl;
+                    cout << "Situacao de emprestimo = " << livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo << endl;
+                    cout << "---------------------------------------------------" << endl;
                     fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
                 };
                 fclose (dadosLivros);
@@ -335,14 +431,17 @@ int main(){
                 cin.get();
                 break;
 
+            // sair
             case 9: 
-                cout << "Obrigado por usar nosso sistema!";
+                cout << "\nObrigado por usar nosso sistema!";
                 cin.ignore();
                 cin.get();
                 break;
 
+            //caso o usuario nao digite nada 
             default:
-                cout<<"Digite uma opcao valida!";
+                cout << "\e[2J" << "\e[0;0H";
+                cout<<"\nDigite uma opcao valida!";
                 cin.ignore();
                 cin.get();
                 break;
