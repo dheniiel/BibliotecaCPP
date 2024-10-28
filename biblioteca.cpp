@@ -30,6 +30,7 @@ int main(){
               
     int codigoConsulta, opcaoMenu, pos;
     string continuar;
+    bool existencia;
 
     struct emprestimo {
         char usuario[150], dataEmprestimo[6], dataDevolucao[6], sitacaoEmprestimo[20];
@@ -135,6 +136,8 @@ int main(){
                     cin >> codigoConsulta;
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
+                    existencia = false;
+
                     while (!feof(dadosLivros)){
                         fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
                         pos++;
@@ -170,8 +173,14 @@ int main(){
                                 cin.get();
                                 cout << "\e[2J" << "\e[0;0H";
                             }
+                            existencia = true;
                             break;
                         }
+                    }
+                    if (!existencia){
+                        cout << "Este codigo nao foi encontrado em nossa base de dados  ! ";
+                        cin.get();
+                        cout << "\e[2J" << "\e[0;0H";
                     }
                     fclose(dadosLivros);
 
@@ -187,26 +196,37 @@ int main(){
             case 3:
                 cout << "\e[2J" << "\e[0;0H";
                 cout << "EXCLUIR LIVRO: \n\n";
-                cout << "Informe o codigo do livro que deseja excluir: " << endl << endl;
-                cin >> codigoConsulta;
+                
+                continuar = "S";
 
-                arquivoAux = fopen("arquivo_aux.txt", "wb");
-                dadosLivros = fopen("dados_livros.txt" , "rb");
+                while (continuar == "S" || continuar == "s"){
+                    cout << "Informe o codigo do livro que deseja excluir: " << endl << endl;
+                    cin >> codigoConsulta;
 
-                fread(&livrosDisponiveis, sizeof(struct livro), 1 , dadosLivros);
-                while (!feof(dadosLivros)){
-                    if (livrosDisponiveis.codigoCatalogo != codigoConsulta){
-                        fwrite(&livrosDisponiveis, sizeof(struct livro), 1, arquivoAux);
-                    }
+                    arquivoAux = fopen("arquivo_aux.txt", "wb");
+                    dadosLivros = fopen("dados_livros.txt" , "rb");
+                    
                     fread(&livrosDisponiveis, sizeof(struct livro), 1 , dadosLivros);
-                }
-                fclose(arquivoAux);
-                fclose(dadosLivros);
-                remove("dados_livros.txt");
-                rename("arquivo_aux.txt", "dados_livros.txt");
-                cout << "Exclusao realizada com sucesso!";
-                cin.ignore();
-                cin.get();
+                    while (!feof(dadosLivros)){
+                        if (livrosDisponiveis.codigoCatalogo != codigoConsulta){
+                            fwrite(&livrosDisponiveis, sizeof(struct livro), 1, arquivoAux);
+                        }
+                        fread(&livrosDisponiveis, sizeof(struct livro), 1 , dadosLivros);
+                    }
+                    fclose(arquivoAux);
+                    fclose(dadosLivros);
+                    remove("dados_livros.txt");
+                    rename("arquivo_aux.txt", "dados_livros.txt");
+                    cout << "Exclusao realizada com sucesso!";
+                    }
+        
+                    cout << "\nDeseja realizar mais uma exclusao? S ou N: ";
+                    cin >> continuar; 
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                    cin.ignore();
+                    cin.get();
+                
                 break;
 
             // emprestimo
@@ -215,6 +235,7 @@ int main(){
                 cout << "EMPRESTIMO: \n\n";
 
                 continuar = "S";
+                existencia = false;
 
                 while(continuar == "S" || continuar == "s"){
                     cout << "Digite o codigo do livro que deseja alugar: " << endl;
@@ -254,14 +275,21 @@ int main(){
                                 cin.get();
                                 cout << "\e[2J" << "\e[0;0H";
                             }
+                            existencia = true;
                             break;
                         }
                         if ((strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Indisponivel") == 0) && (livrosDisponiveis.codigoCatalogo == codigoConsulta)){
                             cout << "Este livro esta indisponivel para emprestimo! \n";
                             cin.get();
                             cout << "\e[2J" << "\e[0;0H";
+                            existencia = true;
                             break;
                         }
+                    }
+                    if (!existencia){
+                        cout << "Este codigo nao foi encontrado em nossa base de dados  ! ";
+                        cin.get();
+                        cout << "\e[2J" << "\e[0;0H";
                     }
                     fclose(dadosLivros);
 
@@ -278,6 +306,7 @@ int main(){
                 cout << "DEVOLUCAO: \n\n";
 
                 continuar = "S";
+                existencia = false;
 
                 while (continuar == "S" || continuar == "s"){
                     cout << "Digite o codigo do livro que deseja devolver: " << endl;
@@ -308,14 +337,21 @@ int main(){
                                 cin.get();
                                 cout << "\e[2J" << "\e[0;0H";
                             }
+                            existencia = true;
                             break;
                         }
                         else if(strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Disponivel") == 0){
                             cout << "\nFalha na devolucao, este livro ja estava disponivel para emprestimo!\n";
                             cin.get();
                             cout << "\e[2J" << "\e[0;0H";
+                            existencia = true;
                             break; 
                         }
+                    }
+                    if (!existencia){
+                        cout << "Este codigo nao foi encontrado em nossa base de dados  ! ";
+                        cin.get();
+                        cout << "\e[2J" << "\e[0;0H";
                     }
                     fclose(dadosLivros);
                     cout << "\nDeseja realizar mais uma devolucao? S ou N: ";
@@ -333,6 +369,7 @@ int main(){
                 cout << "CONSULTA: \n\n";
 
                 continuar = "S";
+                existencia = false;
 
                 while(continuar == "S" || continuar == "s"){
                     cout << "Digite o codigo do livro a ser consultado: " << endl;
@@ -354,6 +391,7 @@ int main(){
                             cout << "Data emprestimo = " << livrosDisponiveis.emprestimoLivro.dataEmprestimo << endl;
                             cout << "Data devolucao = " << livrosDisponiveis.emprestimoLivro.dataDevolucao << endl;
 
+                            existencia = true;
                             break;
                         }
                         else if ((codigoConsulta == livrosDisponiveis.codigoCatalogo) && (strcmp(livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo, "Disponivel") == 0)){
@@ -365,12 +403,18 @@ int main(){
                             cout << "Numero de paginas = "<< livrosDisponiveis.numeroPaginas << endl;
                             cout << "Situacao emprestimo = " << livrosDisponiveis.emprestimoLivro.sitacaoEmprestimo << endl;
                         
+                            existencia = true;
                             break;
                         }
                         fread(&livrosDisponiveis, sizeof(struct livro), 1, dadosLivros);
                     }
-                    fclose (dadosLivros);
+                    if (!existencia){
+                        cout << "Este codigo nao foi encontrado em nossa base de dados  ! ";
+                        cin.get();
+                        cout << "\e[2J" << "\e[0;0H";
+                    }
 
+                    fclose (dadosLivros);
                     cout << "\nDeseja realizar mais uma consulta? S ou N: ";
                     cin >> continuar; 
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
